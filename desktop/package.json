@@ -1,0 +1,10 @@
+{
+  "name": "watchman-on-the-wall",
+  "productName": "Watchman on the Wall",
+  "version": "1.1.0",
+  "description": "A game of community care, intercession and spiritual watchfulness.",
+  "main": "main.js",
+  "author": "Mubogi",
+  "license": "MIT",
+  "homepage": "https://github.com/Mubogi/watchman-on-the-wall"
+}

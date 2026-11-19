@@ -2,3 +2,16 @@
 Thumbs.db
 *.log
 node_modules/
+build/
+android/.gradle/
+android/app/build/
+android/local.properties
+android/build/
+*.jks
+*.keystore
+
+# Generated bundles
+www/
+desktop/www/
+desktop/electron-builder.yml
+build/desktop/

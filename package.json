@@ -1,0 +1,23 @@
+{
+  "name": "watchman-on-the-wall",
+  "version": "1.1.0",
+  "description": "A game of community care, intercession and spiritual watchfulness.",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "serve": "python3 -m http.server 12000",
+    "icons": "python3 tools/make_icons.py",
+    "sync:android": "npx cap sync android",
+    "build:android": "bash tools/build_android.sh",
+    "build:desktop": "bash tools/build_desktop.sh"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.3",
+    "@capacitor/cli": "^6.2.3",
+    "@capacitor/core": "^6.2.3"
+  },
+  "devDependencies": {
+    "electron": "^31.7.7",
+    "electron-builder": "^24.13.3"
+  }
+}

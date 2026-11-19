@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Watchman on the Wall</string>
+    <string name="title_activity_main">Watchman on the Wall</string>
+    <string name="package_name">org.watchmanonthewall.game</string>
+    <string name="custom_url_scheme">org.watchmanonthewall.game</string>
+</resources>

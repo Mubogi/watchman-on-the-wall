@@ -5,8 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Watchman on the Wall — Community Care &amp; Intercession</title>
 <meta name="description" content="A playable 2D isometric game of community care, intercession and spiritual watchfulness. Ezekiel 33:7." />
-<meta name="theme-color" content="#0b0e1a" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d1120'/%3E%3Cpath d='M32 12l16 9v22l-16 9-16-9V21z' fill='none' stroke='%23e8bf76' stroke-width='3'/%3E%3Ccircle cx='32' cy='30' r='6' fill='%23f0a15a'/%3E%3Cpath d='M32 36v14' stroke='%23e8bf76' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+<meta name="theme-color" content="#0c1120" />
+<meta name="color-scheme" content="dark" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Watchman" />
+<meta name="application-name" content="Watchman on the Wall" />
+<meta name="format-detection" content="telephone=no" />
+
+<!-- Open Graph / social -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Watchman on the Wall" />
+<meta property="og:description" content="A game of community care, intercession and spiritual watchfulness." />
+<meta property="og:image" content="assets/icons/social-card.png" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="assets/icons/favicon-32.png" sizes="32x32" type="image/png" />
+<link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
 <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
@@ -55,6 +72,13 @@
 
   <!-- ───────────── Left HUD ───────────── -->
   <aside class="panel hud hud-left" id="hud-left">
+    <div class="drawer-actions" id="drawer-actions">
+      <button class="dact" data-mact="journal">📖 <span>Journal</span></button>
+      <button class="dact" data-mact="save">💾 <span>Save</span></button>
+      <button class="dact" data-mact="load">📂 <span>Load</span></button>
+      <button class="dact" data-mact="help">❔ <span>Help</span></button>
+    </div>
+
     <section class="hud-block watchman-block">
       <div class="block-head">
         <h2>Watchman</h2>
@@ -205,6 +229,34 @@
   <!-- ───────────── Modals ───────────── -->
   <div class="modal-backdrop" id="modal-backdrop" hidden></div>
 
+  <!-- Mobile-only chrome -->
+  <button class="mobile-fab" id="btn-drawer" aria-label="Open watch panel" aria-expanded="false">
+    <span class="fab-icon">🗼</span>
+    <span class="fab-dot" id="fab-dot" hidden></span>
+  </button>
+
+  <div class="drawer-scrim" id="drawer-scrim" hidden></div>
+
+  <div class="mobile-hud" id="mobile-hud" aria-label="Watchman status">
+    <div class="mh-item">
+      <span class="mh-k">Alert</span>
+      <div class="mh-bar"><i id="mh-alert-bar"></i></div>
+      <b id="mh-alert">0</b>
+    </div>
+    <div class="mh-item">
+      <span class="mh-k">Oil</span>
+      <div class="mh-bar"><i id="mh-oil-bar" class="oil"></i></div>
+      <b id="mh-oil">0</b>
+    </div>
+    <div class="mh-item">
+      <span class="mh-k">Health</span>
+      <div class="mh-bar"><i id="mh-health-bar" class="health"></i></div>
+      <b id="mh-health">0%</b>
+    </div>
+    <button class="mh-watch" id="btn-watch-mobile" aria-label="Keep watch">Watch</button>
+  </div>
+
+
   <div class="modal" id="modal-journal" hidden role="dialog" aria-modal="true" aria-labelledby="journal-title">
     <header class="modal-head">
       <div>
@@ -278,5 +330,14 @@
 </div>
 
 <script type="module" src="js/main.js"></script>
+<script>
+  // PWA: register the offline shell. Failures are non-fatal — the game runs
+  // fine from the network alone.
+  if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    });
+  }
+</script>
 </body>
 </html>

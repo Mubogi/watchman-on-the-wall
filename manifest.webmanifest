@@ -1,0 +1,47 @@
+{
+  "name": "Watchman on the Wall",
+  "short_name": "Watchman",
+  "description": "A game of community care, intercession and spiritual watchfulness. Named members carry hidden burdens; you keep the wall and restore them gently.",
+  "id": "/",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070a14",
+  "theme_color": "#0c1120",
+  "categories": ["games", "lifestyle"],
+  "lang": "en",
+  "dir": "ltr",
+  "icons": [
+    { "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-256.png", "sizes": "256x256", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "assets/icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/icons/social-card.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "The isometric village and watchtower"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Intercession Journal",
+      "short_name": "Journal",
+      "description": "Open the watchman's journal",
+      "url": "./index.html?open=journal"
+    },
+    {
+      "name": "Keep Watch",
+      "short_name": "Watch",
+      "description": "Keep watch on the wall",
+      "url": "./index.html?open=watch"
+    }
+  ]
+}

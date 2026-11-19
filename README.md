@@ -19,7 +19,29 @@ dependencies, no network calls.
 | **Hebrews 10:24–25** — *do not neglect meeting together* | Isolation is a burden type; a home visit and a meal is what breaks it. |
 | **James 5:16** — *pray for one another* | Secret Intercession costs prayer oil and softens hearts from a distance. |
 
-## Running it
+## Install it
+
+Every platform runs the same game. Pick whichever suits you — or
+[play in the browser](https://mubogi.github.io/watchman-on-the-wall/) with nothing to install.
+
+| Platform | Download | Notes |
+| --- | --- | --- |
+| **Android** | [`watchman-on-the-wall-1.1.0.apk`](https://github.com/Mubogi/watchman-on-the-wall/releases/latest) | Android 5.1+. Signed release build, installs without the Play Store. |
+| **Windows** | [`…-windows-x64.zip`](https://github.com/Mubogi/watchman-on-the-wall/releases/latest) | Portable — unzip and run. No installer, no admin rights. |
+| **Linux** | [`…-linux-x86_64.AppImage`](https://github.com/Mubogi/watchman-on-the-wall/releases/latest) or [`.deb`](https://github.com/Mubogi/watchman-on-the-wall/releases/latest) | AppImage needs `chmod +x`. The `.deb` is for Debian/Ubuntu. |
+| **iOS / iPadOS** | — | Open the web build in Safari → Share → **Add to Home Screen**. |
+| **Any browser** | [Play now](https://mubogi.github.io/watchman-on-the-wall/) | Installable PWA; works offline after the first visit. |
+
+**Android:** your device will warn about installing from an unknown source — that is expected for
+apps distributed outside Play. Allow the install, and choose **Install anyway** if Play Protect
+prompts. Your saved game survives app updates.
+
+**Windows:** SmartScreen may warn because the build is not code-signed. Choose **More info** →
+**Run anyway**. The app makes no network calls and stores saves locally.
+
+**iPhone/iPad:** the browser build is the supported path; Apple does not allow sideloading.
+
+## Running it from source
 
 The game uses ES modules, so it must be served over HTTP (opening the file directly will not work).
 
@@ -28,6 +50,17 @@ The game uses ES modules, so it must be served over HTTP (opening the file direc
 python3 -m http.server 12000
 # then open http://localhost:12000/
 ```
+
+To rebuild the installable packages:
+
+```bash
+npm install
+npm run build:android    # signed APK  → build/*.apk
+npm run build:desktop    # AppImage, .deb, Windows zip → build/
+```
+
+The Android build needs JDK 17 and the Android SDK (platform 34, build-tools 34.0.0). The desktop
+build uses Electron and needs no extra tooling beyond Node.
 
 ## How to play
 

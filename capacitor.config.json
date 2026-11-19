@@ -1,0 +1,12 @@
+{
+  "appId": "org.watchmanonthewall.game",
+  "appName": "Watchman on the Wall",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false,
+    "backgroundColor": "#070a14"
+  },
+  "server": {
+    "androidScheme": "https"
+  }
+}

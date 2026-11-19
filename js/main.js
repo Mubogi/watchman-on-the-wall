@@ -9,7 +9,17 @@ function boot() {
 
   // The opening invitation: a still, quiet call before the first week begins.
   game.setSpeed(0);
-  game.ui.openModal("modal-help");
+
+  // Honour ?open= shortcuts from the PWA manifest.
+  const target = new URLSearchParams(location.search).get("open");
+  if (target === "journal") {
+    game.ui.openJournal();
+  } else if (target === "watch") {
+    game.keepWatch();
+    game.setSpeed(1);
+  } else {
+    game.ui.openModal("modal-help");
+  }
 
   // Expose for debugging in the console without polluting globals.
   if (typeof window !== "undefined") {

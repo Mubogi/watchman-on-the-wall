@@ -694,9 +694,11 @@ export class Game {
   }
 
   _clickAt(sx, sy) {
-    // Nearest member within a generous click radius.
+    // Nearest member within a generous radius. Touch needs a much bigger
+    // target than a mouse pointer.
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
     let best = null;
-    let bestDist = 30;
+    let bestDist = isTouch ? 52 : 30;
     for (const m of this.members) {
       const iso = isoToScreen(m.gx, m.gy, TILE_W, TILE_H);
       const s = this.world.worldToScreen(iso.x, iso.y - 12);

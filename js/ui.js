@@ -6,6 +6,7 @@
 import { ACTIONS, BURDENS, SCRIPTURE, SEASONS } from "./config.js";
 import { relationLabel } from "./members.js";
 import { clamp, stamp } from "./utils.js";
+import * as audio from "./audio.js";
 
 const $ = (id) => document.getElementById(id);
 
@@ -79,12 +80,26 @@ export class UI {
     });
 
     $("btn-watch").addEventListener("click", () => this.game.keepWatch());
+    $("btn-watch-mobile").addEventListener("click", () => this.game.keepWatch());
     $("btn-journal").addEventListener("click", () => this.openJournal());
     $("btn-save").addEventListener("click", () => this.game.save());
     $("btn-load").addEventListener("click", () => this.game.load());
     $("btn-help").addEventListener("click", () => this.openModal("modal-help"));
     $("btn-sound").addEventListener("click", () => this.game.toggleSound());
     $("btn-next-season").addEventListener("click", () => this.game.nextSeason());
+
+    // Drawer actions stand in for the top-bar buttons on phones.
+    document.getElementById("drawer-actions").addEventListener("click", (e) => {
+      const btn = e.target.closest(".dact");
+      if (!btn) return;
+      const act = btn.dataset.mact;
+      this.closeDrawer();
+      this.game.onModalChange?.(false);
+      if (act === "journal") this.openJournal(this._profileId);
+      else if (act === "save") this.game.save();
+      else if (act === "load") this.game.load();
+      else if (act === "help") this.openModal("modal-help");
+    });
     $("profile-close").addEventListener("click", () => this.game.selectMember(null));
     $("p-journal").addEventListener("click", () => {
       const id = this._profileId;
@@ -121,6 +136,93 @@ export class UI {
       const btn = e.target.closest("[data-warn]");
       if (btn) this.game.warnThreat(btn.dataset.warn);
     });
+
+    this._bindMobile();
+  }
+
+  /** Drawer and bottom-sheet behaviour for phones. */
+  _bindMobile() {
+    const fab = $("btn-drawer");
+    const scrim = $("drawer-scrim");
+
+    const closeDrawer = () => {
+      document.body.classList.remove("drawer-left", "drawer-right");
+      scrim.hidden = true;
+      fab.setAttribute("aria-expanded", "false");
+    };
+
+    // One button opens the left panel; a second tap toggles to the right one.
+    fab.addEventListener("click", () => {
+      const openLeft = document.body.classList.contains("drawer-left");
+      const openRight = document.body.classList.contains("drawer-right");
+      document.body.classList.remove("drawer-left", "drawer-right");
+      if (openLeft) {
+        document.body.classList.add("drawer-right");
+      } else if (!openRight) {
+        document.body.classList.add("drawer-left");
+      }
+      const open = document.body.classList.contains("drawer-left") || document.body.classList.contains("drawer-right");
+      scrim.hidden = !open;
+      fab.setAttribute("aria-expanded", String(open));
+      this.game.onModalChange?.(open);
+      if (open) audio.play("click");
+    });
+
+    scrim.addEventListener("click", () => {
+      closeDrawer();
+      this.game.onModalChange?.(false);
+    });
+
+    // Swipe the drawer shut.
+    let sx = 0;
+    let sy = 0;
+    document.querySelectorAll(".hud").forEach((panel) => {
+      panel.addEventListener("touchstart", (e) => {
+        sx = e.touches[0].clientX;
+        sy = e.touches[0].clientY;
+      }, { passive: true });
+      panel.addEventListener("touchend", (e) => {
+        const dx = e.changedTouches[0].clientX - sx;
+        const dy = Math.abs(e.changedTouches[0].clientY - sy);
+        if (dy < 60 && Math.abs(dx) > 60) {
+          closeDrawer();
+          this.game.onModalChange?.(false);
+        }
+      }, { passive: true });
+    });
+
+    // Keep the canvas from scrolling the page behind it.
+    document.getElementById("world").addEventListener("touchmove", (e) => e.preventDefault(), { passive: false });
+
+    this._closeDrawer = closeDrawer;
+  }
+
+  closeDrawer() {
+    this._closeDrawer?.();
+  }
+
+  syncMobileHud(state) {
+    const set = (barId, valId, pct, label) => {
+      const bar = $(barId);
+      const val = $(valId);
+      if (bar) bar.style.width = `${clamp(pct, 0, 1) * 100}%`;
+      if (val) val.textContent = label;
+    };
+    set("mh-alert-bar", "mh-alert", state.alertness / 100, String(Math.round(state.alertness)));
+    set("mh-oil-bar", "mh-oil", state.oil / state.oilMax, String(Math.round(state.oil)));
+    set("mh-health-bar", "mh-health", state.flockHealth / 100, `${Math.round(state.flockHealth)}%`);
+
+    const w = $("btn-watch-mobile");
+    if (w) w.disabled = state.oil < 8;
+
+    // Nudge the drawer button when something urgent is happening.
+    const dot = $("fab-dot");
+    if (dot) {
+      const urgent = state.threats.some(
+        (t) => !t.defeated && !t.warned && t.isVisible(state.alertness) && t.proximity > 0.55
+      );
+      dot.hidden = !urgent;
+    }
   }
 
   // ─────────────────────────── HUD ───────────────────────────
@@ -187,6 +289,7 @@ export class UI {
     this.syncLog(state);
     this.syncRoster(state);
     this.syncProfile(state);
+    this.syncMobileHud(state);
   }
 
   syncThreats(state) {
