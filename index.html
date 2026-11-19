@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Watchman on the Wall — Community Care &amp; Intercession</title>
+<meta name="description" content="A playable 2D isometric game of community care, intercession and spiritual watchfulness. Ezekiel 33:7." />
+<meta name="theme-color" content="#0b0e1a" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d1120'/%3E%3Cpath d='M32 12l16 9v22l-16 9-16-9V21z' fill='none' stroke='%23e8bf76' stroke-width='3'/%3E%3Ccircle cx='32' cy='30' r='6' fill='%23f0a15a'/%3E%3Cpath d='M32 36v14' stroke='%23e8bf76' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+<div id="app">
+  <canvas id="world" aria-label="Isometric village of the congregation"></canvas>
+  <div class="scene-tint" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M32 6l20 11v30L32 58 12 47V17z" fill="none" stroke="currentColor" stroke-width="2.5" opacity=".8"/>
+        <path d="M22 30h20M22 38h20M22 46h20" stroke="currentColor" stroke-width="2" opacity=".45"/>
+        <circle cx="32" cy="22" r="5.5" fill="currentColor"/>
+      </svg>
+      <div class="brand-text">
+        <h1>Watchman on the Wall</h1>
+        <p>Ezekiel 33:7 · Galatians 6:1–2 · Hebrews 10:24–25 · James 5:16</p>
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div class="season-badge" id="season-badge">
+        <span class="season-dot" id="season-dot"></span>
+        <div class="season-copy">
+          <strong id="season-name">Spring</strong>
+          <span id="season-week">Week 1 of 12</span>
+        </div>
+      </div>
+
+      <div class="speed-controls" role="group" aria-label="Time controls">
+        <button class="spd" data-speed="0" title="Pause (Space)" aria-label="Pause">❚❚</button>
+        <button class="spd active" data-speed="1" title="Normal speed (1)" aria-label="Normal speed">1×</button>
+        <button class="spd" data-speed="2" title="Double speed (2)" aria-label="Double speed">2×</button>
+      </div>
+
+      <div class="topbar-btns">
+        <button class="ghost" id="btn-journal" title="Intercession Journal (J)">Journal</button>
+        <button class="ghost" id="btn-save" title="Save (S)">Save</button>
+        <button class="ghost" id="btn-load" title="Load (L)">Load</button>
+        <button class="ghost icon" id="btn-sound" title="Toggle sound (M)" aria-label="Toggle sound">♪</button>
+        <button class="ghost icon" id="btn-help" title="How to play (H)" aria-label="How to play">?</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ───────────── Left HUD ───────────── -->
+  <aside class="panel hud hud-left" id="hud-left">
+    <section class="hud-block watchman-block">
+      <div class="block-head">
+        <h2>Watchman</h2>
+        <span class="hint" title="Alertness reveals threats before they reach the gate, and surfaces silent strugglers.">on the wall</span>
+      </div>
+
+      <div class="ring-row">
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 96 96" aria-hidden="true">
+            <circle class="ring-track" cx="48" cy="48" r="40"></circle>
+            <circle class="ring-fill" id="alert-ring" cx="48" cy="48" r="40"></circle>
+          </svg>
+          <div class="ring-center">
+            <span class="ring-value" id="alert-value">0</span>
+            <span class="ring-label">Alertness</span>
+          </div>
+        </div>
+        <div class="ring-side">
+          <div class="meter">
+            <div class="meter-head"><span>Prayer Oil</span><span id="oil-value">0</span></div>
+            <div class="meter-bar"><i id="oil-bar" class="fill oil"></i></div>
+          </div>
+          <button class="btn watch" id="btn-watch">
+            <span>Keep Watch</span>
+            <small>−8 oil · +18 alertness</small>
+          </button>
+          <p class="micro" id="watch-status">The wall is quiet.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="hud-block">
+      <div class="block-head">
+        <h2>Flock Health</h2>
+        <span class="hint" id="unity-label">Unity 0</span>
+      </div>
+      <div class="meter">
+        <div class="meter-head"><span>Health &amp; Unity Index</span><span id="health-value">0%</span></div>
+        <div class="meter-bar"><i id="health-bar" class="fill health"></i></div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><span class="stat-k">Love</span><b id="stat-love">0</b></div>
+        <div class="stat"><span class="stat-k">Prayer</span><b id="stat-prayer">0</b></div>
+        <div class="stat"><span class="stat-k">Hospitality</span><b id="stat-hosp">0</b></div>
+        <div class="stat"><span class="stat-k">Doctrine</span><b id="stat-doctrine">0</b></div>
+      </div>
+      <div class="restored">
+        <div class="restored-icon" aria-hidden="true">✦</div>
+        <div>
+          <b id="restored-count">0</b>
+          <span>Restored &amp; Established</span>
+        </div>
+        <div class="restored-sub" id="restored-sub">none yet</div>
+      </div>
+    </section>
+
+    <section class="hud-block">
+      <div class="block-head">
+        <h2>Benevolence</h2>
+        <span class="hint">capacity to help</span>
+      </div>
+      <div class="res-row">
+        <div class="res" data-res="food" title="Food for home visits and meals">
+          <span class="res-ico">🍞</span>
+          <div class="res-meta"><span>Food</span><b id="res-food">0</b></div>
+          <div class="res-bar"><i id="res-food-bar"></i></div>
+        </div>
+        <div class="res" data-res="time" title="Time given to visits and mentoring">
+          <span class="res-ico">⏳</span>
+          <div class="res-meta"><span>Time</span><b id="res-time">0</b></div>
+          <div class="res-bar"><i id="res-time-bar"></i></div>
+        </div>
+        <div class="res" data-res="counsel" title="Counsel for gentle restoration">
+          <span class="res-ico">🕯️</span>
+          <div class="res-meta"><span>Counsel</span><b id="res-counsel">0</b></div>
+          <div class="res-bar"><i id="res-counsel-bar"></i></div>
+        </div>
+      </div>
+    </section>
+  </aside>
+
+  <!-- ───────────── Right HUD ───────────── -->
+  <aside class="panel hud hud-right" id="hud-right">
+    <section class="hud-block tower-block">
+      <div class="block-head">
+        <h2>The Horizon</h2>
+        <span class="hint" id="threat-count">clear</span>
+      </div>
+      <div class="radar" id="radar" aria-label="Watchtower radar"></div>
+      <ul class="threat-list" id="threat-list">
+        <li class="threat-empty">No threat in sight. Keep the wall.</li>
+      </ul>
+    </section>
+
+    <section class="hud-block log-block">
+      <div class="block-head">
+        <h2>Watch Log</h2>
+        <span class="hint">recent</span>
+      </div>
+      <ul class="watch-log" id="watch-log"></ul>
+    </section>
+  </aside>
+
+  <!-- ───────────── Roster ───────────── -->
+  <div class="roster panel" id="roster" aria-label="Congregation roster"></div>
+
+  <!-- ───────────── Member profile ───────────── -->
+  <aside class="panel profile" id="profile" hidden>
+    <button class="profile-close" id="profile-close" aria-label="Close profile">✕</button>
+    <div class="profile-head">
+      <div class="avatar" id="p-avatar"></div>
+      <div class="profile-id">
+        <h2 id="p-name">—</h2>
+        <div class="profile-tags">
+          <span class="chip role" id="p-role">member</span>
+          <span class="chip state" id="p-state">steady</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="profile-line" id="p-line">…</p>
+
+    <div class="meters">
+      <div class="meter compact"><div class="meter-head"><span>Faith</span><span id="p-faith-v">0</span></div><div class="meter-bar"><i id="p-faith" class="fill faith"></i></div></div>
+      <div class="meter compact"><div class="meter-head"><span>Love &amp; Belonging</span><span id="p-love-v">0</span></div><div class="meter-bar"><i id="p-love" class="fill love"></i></div></div>
+      <div class="meter compact"><div class="meter-head"><span>Hope</span><span id="p-hope-v">0</span></div><div class="meter-bar"><i id="p-hope" class="fill hope"></i></div></div>
+    </div>
+
+    <div class="burden-card" id="p-burden">
+      <div class="burden-head"><span>Hidden burden</span><b id="p-burden-name">unknown</b></div>
+      <p id="p-burden-desc">Look closer — watch and pray.</p>
+      <div class="burden-sev"><div class="meter-bar"><i id="p-sev" class="fill sev"></i></div></div>
+      <div class="soften" id="p-soften" hidden>Heart softened by intercession — truth will land gently.</div>
+    </div>
+
+    <div class="actions" id="p-actions"></div>
+
+    <div class="relations">
+      <h3>Relationships</h3>
+      <div class="rel-chips" id="p-relations"></div>
+    </div>
+
+    <div class="profile-foot">
+      <button class="link" id="p-journal">Open journey in Journal →</button>
+    </div>
+  </aside>
+
+  <!-- ───────────── Modals ───────────── -->
+  <div class="modal-backdrop" id="modal-backdrop" hidden></div>
+
+  <div class="modal" id="modal-journal" hidden role="dialog" aria-modal="true" aria-labelledby="journal-title">
+    <header class="modal-head">
+      <div>
+        <h2 id="journal-title">Watchman's Intercession Journal</h2>
+        <p>Every member's journey — burdens seen, care given, grace received.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">✕</button>
+    </header>
+    <div class="journal-body">
+      <nav class="journal-nav" id="journal-nav"></nav>
+      <div class="journal-entries" id="journal-entries"></div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-debrief" hidden role="dialog" aria-modal="true" aria-labelledby="debrief-title">
+    <header class="modal-head">
+      <div>
+        <h2 id="debrief-title">Season Debrief</h2>
+        <p id="debrief-sub">For elders, cell leaders and intercessors.</p>
+      </div>
+    </header>
+    <div class="debrief-body">
+      <div class="debrief-stats" id="debrief-stats"></div>
+      <div class="debrief-verse" id="debrief-verse"></div>
+      <h3>Three questions to sit with</h3>
+      <ol class="questions" id="debrief-questions"></ol>
+      <footer class="modal-foot">
+        <button class="btn primary" id="btn-next-season">Enter the next season →</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal wide" id="modal-help" hidden role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <header class="modal-head">
+      <div>
+        <h2 id="help-title">How to keep the wall</h2>
+        <p>You are the watchman of a small neighborhood congregation.</p>
+      </div>
+      <button class="modal-close" data-close aria-label="Close">✕</button>
+    </header>
+    <div class="help-body">
+      <div class="help-cols">
+        <section>
+          <h3>The rhythm</h3>
+          <p>Members walk the village. Click any of them to look closer. Hearts drift quietly; burdens are hidden until you look — or until your alertness is high enough to see the silent strugglers glowing faintly at the edges of town.</p>
+          <p><b>Keep Watch</b> spends prayer oil to raise alertness. Alertness decays, so the wall must be kept. High alertness reveals approaching threats earlier — giving you time to sound a warning before they reach the gate.</p>
+          <p>Burdens grow heavier over time. If a burden reaches its full weight, that member falls away. Bring it back to zero and they are restored.</p>
+        </section>
+        <section>
+          <h3>The four care actions</h3>
+          <ul class="help-actions">
+            <li><b>Secret Intercession</b> — costs prayer oil. Softens a heart from afar, and makes later truth-telling safe. Best for shame, pride and fear.</li>
+            <li><b>Home Visit &amp; Meal</b> — costs food and time. Heals isolation and practical need. Best for grief, financial strain, family tension.</li>
+            <li><b>Gentle Restoration &amp; Truth</b> — costs counsel and time. Rescues from deception without pride. <i>Unsafe on a hard heart</i> — intercede first.</li>
+            <li><b>Pair with a Mature Mentor</b> — costs time and counsel. Builds lasting discipleship. Best for hunger for the Word, weariness, and new believers.</li>
+          </ul>
+          <p class="micro">Galatians 6:1 — restore gently. A harsh word to a hard heart wounds twice.</p>
+        </section>
+      </div>
+      <section class="help-keys">
+        <h3>Keys</h3>
+        <p><kbd>Space</kbd> pause · <kbd>1</kbd> normal · <kbd>2</kbd> fast · <kbd>J</kbd> journal · <kbd>S</kbd> save · <kbd>L</kbd> load · <kbd>H</kbd> help · <kbd>M</kbd> sound · drag to pan · scroll to zoom</p>
+      </section>
+      <footer class="modal-foot">
+        <button class="btn primary" data-close>Begin</button>
+      </footer>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
