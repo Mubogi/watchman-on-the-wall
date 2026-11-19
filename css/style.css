@@ -657,7 +657,16 @@ canvas#world.pointing { cursor: pointer; }
   width: 28px; height: 28px; border-radius: 8px; cursor: pointer; flex: none; font-size: 12px;
 }
 .modal-close:hover { color: var(--ink); background: rgba(255, 255, 255, 0.07); }
-.modal-foot { padding: 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.07); display: flex; justify-content: flex-end; gap: 8px; }
+.modal-foot { padding: 14px 20px; border-top: 1px solid rgba(255, 255, 255, 0.07); display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.modal-foot .install-link {
+  margin-right: auto;
+  font-size: 12px;
+  color: var(--ink-dim);
+  text-decoration: none;
+  border-bottom: 1px dotted currentColor;
+}
+.modal-foot .install-link:hover,
+.modal-foot .install-link:focus-visible { color: var(--ink); }
 
 /* Journal */
 .journal-body { display: grid; grid-template-columns: 186px 1fr; min-height: 0; flex: 1 1 auto; overflow: hidden; }
@@ -1046,6 +1055,8 @@ kbd {
   .modal-head p { font-size: 10.5px; }
   .modal-close { width: 36px; height: 36px; }
   .modal-foot { padding: 11px 14px calc(11px + var(--safe-b)); }
+  .modal-foot { flex-wrap: wrap; }
+  .modal-foot .install-link { margin-right: 0; width: 100%; text-align: center; padding: 2px 0 4px; }
   .modal-foot .btn { width: 100%; min-height: 48px; }
   /* The footer lives inside the scrollable body, so pin the primary CTA to
      the bottom of the sheet instead of leaving it below the fold. */
